@@ -1,6 +1,12 @@
-import yandex_music
+import sqlalchemy as db
+from sqlalchemy.orm import Session
+from yandex_music import Client
 
-client = yandex_music.Client('y0_AgAAAABEFw_SAAG8XgAAAADuNm8liYO1L9GcSr-M24xZsMj81t5iq-Y').init()
+from user_token import token
 
-for i in client.usersLikesTracks():
-    print(i.fetch_track().artists_name())
+client = Client(token).init()
+engine = db.create_engine('postgresql://postgres:xm6idbip@localhost/postgres', echo=True)
+
+with Session(autoflush=False, bind=engine) as session:
+    track = client.usersLikesTracks().fetch_tracks()[19]
+    print(track.albums[0].labels[0].id)
